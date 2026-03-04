@@ -1,24 +1,56 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import { UserProvider } from './context/UserContext';
+import Home from './component/home';
+import Login from './component/auth/Login';
+import Register from './component/auth/Register';
+import TransactionAPP from './component/TransactionAPP';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+
+  const handleNavigate = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleLoginSuccess = () => {
+    setCurrentPage('transactions');
+  };
+
+  const handleRegister = () => {
+    setCurrentPage('login');
+  };
+
+  const handleLogout = () => {
+    setCurrentPage('home');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserProvider>
+      <div className="App">
+        {currentPage === 'home' && (
+          <Home onNavigate={handleNavigate} />
+        )}
+        
+        {currentPage === 'login' && (
+          <Login 
+            onLoginSuccess={handleLoginSuccess}
+            onSwitchToRegister={() => handleNavigate('register')}
+          />
+        )}
+        
+        {currentPage === 'register' && (
+          <Register 
+            onRegister={handleRegister}
+            onSwitchToLogin={() => handleNavigate('login')}
+          />
+        )}
+        
+        {currentPage === 'transactions' && (
+          <TransactionAPP onLogout={handleLogout} />
+        )}
+      </div>
+    </UserProvider>
   );
 }
 
